@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>48-Hour Startup Launcher</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .hover-scale {
+            transition: transform 0.2s ease-in-out;
+        }
+        .hover-scale:hover {
+            transform: scale(1.02);
+        }
+        .card-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: box-shadow 0.3s ease-in-out;
+        }
+        .card-shadow:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .glow {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 5px -5px #667eea;
+            }
+            to {
+                box-shadow: 0 0 20px -5px #667eea;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="gradient-bg py-12 mb-8">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <h1 class="text-4xl font-bold text-center text-white mb-4">
+                48-Hour Startup Launcher
+            </h1>
+            <p class="text-center text-white/80 text-lg">
+                Transform your idea into a launch-ready business in 48 hours
+            </p>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 max-w-4xl">
+        <div class="bg-white rounded-2xl card-shadow p-8 mb-8 hover-scale">
+            <form id="idea-form" class="space-y-6">
+                <div class="space-y-4">
+                    <label class="block text-sm font-semibold text-gray-700 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        Enter your product or service idea:
+                    </label>
+                    <input 
+                        type="text" 
+                        id="idea" 
+                        name="idea" 
+                        required 
+                        placeholder="e.g., Resume Writing Service"
+                        class="w-full p-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200"
+                    />
+                </div>
+
+                <div class="mb-6">
+                    <label for="model" class="block text-sm font-medium text-gray-700 mb-2">Select AI Model</label>
+                    <select id="model" name="model" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <optgroup label="OpenAI">
+                            <option value="gpt-4-turbo-preview">GPT-4 Turbo</option>
+                            <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                            <option value="custom">Custom OpenAI Model</option>
+                        </optgroup>
+                        <optgroup label="Anthropic">
+                            <option value="claude-3-opus-20240229">Claude 3 Opus</option>
+                            <option value="claude-3-sonnet-20240229">Claude 3 Sonnet</option>
+                            <option value="custom">Custom Anthropic Model</option>
+                        </optgroup>
+                        <optgroup label="Google">
+                            <option value="gemini-pro">Gemini Pro</option>
+                            <option value="custom">Custom Google Model</option>
+                        </optgroup>
+                        <optgroup label="Groq">
+                            <option value="llama2-70b-4096">Llama2 70B</option>
+                            <option value="mixtral-8x7b-32768">Mixtral 8x7B</option>
+                            <option value="custom">Custom Groq Model</option>
+                        </optgroup>
+                        <optgroup label="OpenRouter">
+                            <option value="openai/gpt-4-turbo-preview">GPT-4 Turbo (via OpenRouter)</option>
+                            <option value="anthropic/claude-3-opus-20240229">Claude 3 Opus (via OpenRouter)</option>
+                            <option value="custom">Custom OpenRouter Model</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div id="custom-model-container" class="mb-6 hidden">
+                    <label for="custom-model" class="block text-sm font-medium text-gray-700 mb-2">Enter Custom Model ID</label>
+                    <input 
+                        type="text" 
+                        id="custom-model" 
+                        name="custom-model" 
+                        placeholder="e.g., mistral/mistral-7b-instruct"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    <p class="mt-2 text-sm text-gray-500">
+                        <span id="custom-model-hint"></span>
+                    </p>
+                </div>
+
+                <div class="mb-6">
+                    <label for="provider" class="block text-sm font-medium text-gray-700 mb-2">Select Provider</label>
+                    <select id="provider" name="provider" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="openai">OpenAI</option>
+                        <option value="anthropic">Anthropic</option>
+                        <option value="google">Google</option>
+                        <option value="groq">Groq</option>
+                        <option value="openrouter">OpenRouter</option>
+                    </select>
+                </div>
+
+                <button 
+                    type="submit"
+                    class="w-full px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl flex items-center justify-center glow"
+                >
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    Generate Framework
+                </button>
+            </form>
+        </div>
+
+        <div id="output" class="mt-8 space-y-6 hidden">
+            <div id="loading" class="text-center py-12 bg-white rounded-2xl card-shadow">
+                <div class="animate-spin rounded-full h-16 w-16 border-4 border-blue-600 border-t-transparent mx-auto"></div>
+                <p class="mt-6 text-gray-700 text-lg font-medium">Generating your startup framework...</p>
+                <p id="timer" class="mt-3 text-sm text-gray-500">Time elapsed: 0s</p>
+            </div>
+            <div id="error" class="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-xl relative hidden" role="alert">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span class="block sm:inline"></span>
+                </div>
+            </div>
+            <div id="framework" class="prose max-w-none bg-white rounded-2xl card-shadow p-8"></div>
+            <div id="action-buttons" class="flex flex-wrap gap-4 mt-6 hidden">
+                <button onclick="copyContent()" class="inline-flex items-center px-6 py-3 border border-transparent text-sm font-medium rounded-xl shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 hover:shadow-lg">
+                    <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+                    </svg>
+                    Copy
+                </button>
+                <button onclick="exportPDF()" class="inline-flex items-center px-6 py-3 border border-transparent text-sm font-medium rounded-xl shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 hover:shadow-lg">
+                    <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    Export PDF
+                </button>
+                <button onclick="regenerateContent()" class="inline-flex items-center px-6 py-3 border border-transparent text-sm font-medium rounded-xl shadow-sm text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200 hover:shadow-lg">
+                    <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    Regenerate
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+      let currentSessionId = null;
+      let statusCheckInterval = null;
+      let startTime = null;
+      let timerInterval = null;
+      let isGenerating = false;
+
+      // Add form event listener
+      document.getElementById('idea-form').addEventListener('submit', generateFramework);
+
+      function updateTimer() {
+        if (!startTime) return;
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        const minutes = Math.floor(elapsed / 60);
+        const seconds = elapsed % 60;
+        const timerText = minutes > 0 
+          ? `${minutes}m ${seconds}s` 
+          : `${seconds}s`;
+        document.getElementById('timer').textContent = `Time elapsed: ${timerText}`;
+      }
+
+      function startTimer() {
+        startTime = Date.now();
+        if (timerInterval) {
+          clearInterval(timerInterval);
+        }
+        timerInterval = setInterval(updateTimer, 1000);
+        updateTimer();
+      }
+
+      function stopTimer() {
+        if (timerInterval) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+        }
+        startTime = null;
+      }
+
+      function setGeneratingState(isGenerating) {
+        const generateButton = document.querySelector('button[type="submit"]');
+        const buttonText = generateButton.querySelector('span') || generateButton;
+        
+        if (isGenerating) {
+            generateButton.disabled = true;
+            generateButton.classList.add('opacity-50', 'cursor-not-allowed');
+            buttonText.innerHTML = `
+                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Generating...
+            `;
+        } else {
+            generateButton.disabled = false;
+            generateButton.classList.remove('opacity-50', 'cursor-not-allowed');
+            buttonText.innerHTML = `
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+                Generate Framework
+            `;
+        }
+      }
+
+      // Add model hints for custom models
+      const modelHints = {
+          openai: "Enter the model ID from OpenAI (e.g., gpt-4-0125-preview)",
+          anthropic: "Enter the model ID from Anthropic (e.g., claude-3-opus-20240229)",
+          google: "Enter the model ID from Google (e.g., gemini-pro)",
+          groq: "Enter the model ID from Groq (e.g., llama2-70b-4096)",
+          openrouter: "Enter the model ID from OpenRouter (e.g., mistral/mistral-7b-instruct)"
+      };
+
+      // Handle model selection change
+      document.getElementById('model').addEventListener('change', function() {
+          const customModelContainer = document.getElementById('custom-model-container');
+          const customModelHint = document.getElementById('custom-model-hint');
+          const provider = document.getElementById('provider').value;
+          
+          if (this.value === 'custom') {
+              customModelContainer.classList.remove('hidden');
+              customModelHint.textContent = modelHints[provider];
+          } else {
+              customModelContainer.classList.add('hidden');
+          }
+      });
+
+      // Handle provider change
+      document.getElementById('provider').addEventListener('change', function() {
+          const modelSelect = document.getElementById('model');
+          const customModelHint = document.getElementById('custom-model-hint');
+          
+          // Update custom model hint if custom model is selected
+          if (modelSelect.value === 'custom') {
+              customModelHint.textContent = modelHints[this.value];
+          }
+      });
+
+      async function generateFramework(event) {
+        event.preventDefault();
+        
+        // Prevent multiple submissions
+        if (isGenerating) {
+            return;
+        }
+        
+        const idea = document.getElementById('idea').value.trim();
+        const model = document.getElementById('model').value;
+        const customModel = document.getElementById('custom-model').value.trim();
+        const provider = document.getElementById('provider').value;
+        
+        if (!idea) {
+          showError('Please enter your startup idea');
+          return;
+        }
+
+        if (!model) {
+          showError('Please select an AI model');
+          return;
+        }
+
+        if (model === 'custom' && !customModel) {
+          showError('Please enter a custom model ID');
+          return;
+        }
+
+        if (!provider) {
+          showError('Please select a provider');
+          return;
+        }
+
+        // Set generating state
+        isGenerating = true;
+        setGeneratingState(true);
+
+        // Show loading state
+        document.getElementById('loading').classList.remove('hidden');
+        document.getElementById('error').classList.add('hidden');
+        document.getElementById('output').classList.add('hidden');
+        document.getElementById('action-buttons').classList.add('hidden');
+        
+        // Start timer
+        startTimer();
+
+        try {
+          const response = await fetch('/api/generate', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+              idea, 
+              model: model === 'custom' ? customModel : model, 
+              provider 
+            })
+          });
+
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Failed to generate framework');
+          }
+
+          const data = await response.json();
+          const sessionId = data.sessionId;
+
+          // Poll for status updates
+          const pollInterval = setInterval(async () => {
+            try {
+              const statusResponse = await fetch(`/api/status/${sessionId}`);
+              const statusData = await statusResponse.json();
+
+              if (statusData.error) {
+                throw new Error(statusData.error);
+              }
+
+              if (statusData.content) {
+                document.getElementById('framework').innerHTML = statusData.content;
+                document.getElementById('output').classList.remove('hidden');
+              }
+
+              if (statusData.isComplete) {
+                clearInterval(pollInterval);
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('action-buttons').classList.remove('hidden');
+                stopTimer();
+                isGenerating = false;
+                setGeneratingState(false);
+              }
+            } catch (error) {
+              clearInterval(pollInterval);
+              showError(error.message);
+              stopTimer();
+              isGenerating = false;
+              setGeneratingState(false);
+            }
+          }, 1000);
+        } catch (error) {
+          showError(error.message);
+          stopTimer();
+          isGenerating = false;
+          setGeneratingState(false);
+        }
+      }
+
+      function showError(message) {
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('error').classList.remove('hidden');
+        document.getElementById('error').querySelector('span').textContent = message;
+        // Scroll to error message
+        document.getElementById('error').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+
+      function copyContent() {
+        const content = document.getElementById('framework').innerText;
+        navigator.clipboard.writeText(content).then(() => {
+          const button = document.querySelector('button:first-of-type');
+          const originalText = button.innerHTML;
+          button.innerHTML = `
+            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            Copied!
+          `;
+          setTimeout(() => {
+            button.innerHTML = originalText;
+          }, 2000);
+        });
+      }
+
+      function exportPDF() {
+        const element = document.getElementById('framework');
+        const opt = {
+          margin: 1,
+          filename: 'startup-framework.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2 },
+          jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+
+        // Add title to the PDF
+        const title = document.createElement('h1');
+        title.textContent = 'Startup Launch Framework';
+        title.style.textAlign = 'center';
+        title.style.marginBottom = '20px';
+        element.insertBefore(title, element.firstChild);
+
+        html2pdf().set(opt).from(element).save().then(() => {
+          // Remove the title after PDF generation
+          element.removeChild(title);
+        });
+      }
+
+      function regenerateContent() {
+        document.getElementById('loading').classList.remove('hidden');
+        document.getElementById('action-buttons').classList.add('hidden');
+        document.getElementById('framework').innerHTML = '';
+        generateFramework(new Event('submit'));
+      }
+    </script>
+</body>
+</html> 
